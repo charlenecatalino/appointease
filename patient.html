@@ -21,6 +21,7 @@
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
 
+  <script src="js/auth/register.js" defer></script>
 </head>
 
 <body style="background-color: #CFE5F9;">
@@ -29,7 +30,10 @@
     <div class="container-fluid h-custom" >
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 card mt-5 mb-3">
-          <form>
+
+        <!-- Registration Form -->
+
+          <form id="form_register">
             <div class="mt-3">
                 <h2 class="text-center">Patient</h2>
             </div>
@@ -49,8 +53,8 @@
             </div>
 
             <div class="mb-3">
-                <label for="dob" class="form-label">Date of Birth:</label>
-                <input type="date" class="form-control" id="dob" name="dob" required>
+                <label for="date_of_birth" class="form-label">Date of Birth:</label>
+                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
             </div>
 
             <div class="mb-3">
@@ -71,7 +75,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Marital Status:</label>
-                <select class="form-select" required>
+                <select class="form-select" name="marital_status" required>
                     <option value="" disabled selected>Select Status</option>
                     <option value="admin">Married</option>
                     <option value="patient">Single</option>
@@ -86,8 +90,8 @@
             </div>
 
             <div class="mb-3">
-                <label for="number" class="form-label">Contact Number:</label>
-                <input type="text" class="form-control" id="number" name="number" required>
+                <label for="contact_number" class="form-label">Contact Number:</label>
+                <input type="text" class="form-control" id="contact_number" name="contact_number" required>
             </div>
 
             <div class="mb-3">
@@ -109,13 +113,9 @@
                             placeholder="Password">
                     </div>
                 </div>
-            </div>
-            
-                <a href="index.html"><button type="submit" class="btn btn-primary btn-block mb-3">Register</button></a>
+            </div>     
+                <button type="submit" class="btn btn-primary btn-block mb-3">Register</button>
                 <p>Already have an account? <a href="loginpatient.html" class="text-primary">Login</a></p>
-            
-                
-  
             </form>
         </div>
         </div>
