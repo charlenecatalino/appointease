@@ -20,7 +20,7 @@
 
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
-
+  <script type="module" src="js/docsched.js"></script>
 </head>
 
 <body id="top">
@@ -87,17 +87,23 @@
            <div class="appoinment-wrap mt-5 mt-lg-0 pl-lg-5">
 			<div id="doctor-schedule">
 				<h1 class="title-color">Doctor's Schedule</h1>
-				<!-- Example: Display doctor schedules here -->
-				<div class="list-group">
-					<a href="#" class="list-group-item list-group-item-action">Mon - Tue, 8:00 AM - 4:00 PM</a>
-					<a href="#" class="list-group-item list-group-item-action">Thu - Fri, 9:00 AM - 4:00 PM</a>
-					<a href="#" class="list-group-item list-group-item-action">Sat, 10:00 AM - 5:00 PM</a>
-					<!-- Add more schedule items dynamically from the database -->
-				</div>
+				<!-- Example: Display doctor sched here -->
+				<table class="table">
+					<thead>
+					  <tr>
+						<th scope="col">Day</th>
+						<th scope="col">Start Time</th>
+						<th scope="col">End Time</th>
+					  </tr>
+					</thead>
+					<tbody id="scheduleTable">
+					  <!-- Doctor schedule rows will go here dynamically from the database -->
+					</tbody>
+				  </table>
 			<hr>
 			</div>
             <h2 class="mb-2 title-color">Book an appointnment</h2>
-               <form id="#" class="appoinment-form" method="post" action="#">
+               <form id="form_register" class="appoinment-form" method="post" action="#">
                     <div class="row">
                          <div class="col-lg-6">
                             <div class="form-group">
@@ -224,12 +230,97 @@
     
     <script src="plugins/shuffle/shuffle.min.js"></script>
     <script src="plugins/counterup/jquery.counterup.min.js"></script>
-    <!-- Google Map -->
-    <script src="plugins/google-map/map.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
-    
-    <script src="js/script.js"></script>
-    <script src="js/contact.js"></script>
+   
+	<!-- ... (your existing HTML code) ... -->
+
+<script type="module">
+    import {
+        aebackendURL,
+        successNotification,
+        errorNotification,
+    } from "../utils/utils.js";
+
+    // Function to fetch and display doctor sched for patients
+    async function fetchDoctorschedForPatients() {
+        try {
+            const response = await fetch(`${aebackendURL}/api/sched`);
+            if (response.ok) {
+                const sched = await response.json();
+                // Update the HTML on the appointment page to display the sched for patients
+                updateDoctorschedForPatients(sched);
+            } else {
+                console.error("Failed to fetch doctor sched:", response.status);
+            }
+        } catch (error) {
+            console.error("Error fetching doctor sched:", error);
+        }
+    }
+
+    // Function to update the schedule table on the appointment page for patients
+    function updateDoctorschedForPatients(sched) {
+        const tableBody = document.querySelector("#scheduleTable");
+        // Clear existing rows
+        tableBody.innerHTML = "";
+
+        // Iterate through sched and create rows
+        sched.forEach((schedule) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${schedule.day}</td>
+                <td>${schedule.startTime}</td>
+                <td>${schedule.endTime}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Function to handle appointment submission
+    const form_register = document.getElementById("form_register");
+
+    form_register.onsubmit = async (e) => {
+        e.preventDefault();
+
+        // Disable Button
+        document.querySelector("#form_register button").disabled = true;
+
+        // Get Values of Form (input, textarea, select) set it as form-data
+        const formData = new FormData(form_register);
+
+        // Fetch API Appointments Endpoint
+        try {
+            const response = await fetch(`${aebackendURL}/api/appointment`, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                },
+                body: formData,
+            });
+
+            // Get response if 200-299 status code
+            if (response.ok) {
+                form_register.reset();
+                successNotification("Appointment successfully scheduled.", 5);
+            } else if (response.status == 422) {
+                const json = await response.json();
+                errorNotification(json.message, 5);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        } finally {
+            // Enable Button
+            document.querySelector("#form_register button").disabled = false;
+            document.querySelector("#form_register button").innerHTML = `Make Appointment`;
+        }
+    };
+
+    // Initial fetch of doctor sched for patients when the page loads
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchDoctorschedForPatients();
+    });
+</script>
+
+<!-- ... (the rest of your HTML code) ... -->
+
 
   </body>
   </html>
